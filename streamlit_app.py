@@ -1,6 +1,7 @@
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.functions import col,when_matched
+import requests
 
 cnx = st.connection("snowflake")
 session = cnx.session()
@@ -31,7 +32,11 @@ if ingradients_list:
     ingradients_string = ''
 
     for fruit_chosen in ingradients_list:
-        ingradients_string += fruit_chosen + ' '
+      
+      ingradients_string += fruit_chosen + ' '
+      smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
+      sf_df = st.dataframe(data=smoothiefroot_response.json(),use_container_width=True)     
+      
         
     # st.write(ingradients_string)
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
@@ -52,11 +57,10 @@ if ingradients_list:
     #     session.sql(my_insert_stmt).collect()
     #     st.success('Your Smoothie is ordered!', icon="✅")
 
-# New Section to display smoothiefroot nutrition information
 
-import requests
-smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
-#st.text(smoothiefroot_response.json())   
 
-sf_df = st.dataframe(data=smoothiefroot_response.json(),use_container_width=True)         
+
+
+
+    
 
